@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Jogo de Sudoku</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <h1>Jogo de Sudoku</h1>
+    <table>
+        {% for row_index, row in enumerate(sudoku) %}
+        <tr>
+            {% for col_index, cell in enumerate(row) %}
+            <td class="
+                {% if col_index % 3 == 0 %} bold-border {% endif %}
+                {% if row_index % 3 == 0 %} bold-border {% endif %}
+                ">
+                {{ cell if cell != 0 else '' }}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
