@@ -2,24 +2,32 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jogo de Sudoku</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
     <h1>Jogo de Sudoku</h1>
-    <table>
-        {% for row_index, row in enumerate(sudoku) %}
-        <tr>
-            {% for col_index, cell in enumerate(row) %}
-            <td class="
-                {% if col_index % 3 == 0 %} bold-border {% endif %}
-                {% if row_index % 3 == 0 %} bold-border {% endif %}
-                ">
-                {{ cell if cell != 0 else '' }}
-            </td>
+    <form action="{{ url_for('check') }}" method="post">
+        <table>
+            {% for i in range(sudoku|length) %}
+            <tr>
+                {% for j in range(sudoku[i]|length) %}
+                <td>
+                    <input type="text" name="cell_{{ i }}_{{ j }}" value="{{ sudoku[i][j] }}" maxlength="1">
+                </td>
+                {% endfor %}
+            </tr>
             {% endfor %}
-        </tr>
-        {% endfor %}
-    </table>
+        </table>
+        <button type="submit">Verificar</button>
+    </form>
+    <a href="{{ url_for('new_game') }}">
+        <button type="button">Novo Jogo</button>
+    </a>
+    {% if message %}
+    <p>{{ message }}</p>
+    {% endif %}
 </body>
 </html>
+
