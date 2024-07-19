@@ -14,7 +14,9 @@
             <tr>
                 {% for j in range(sudoku[i]|length) %}
                 <td>
-                    <input type="text" name="cell_{{ i }}_{{ j }}" value="{{ sudoku[i][j] if sudoku[i][j] != 0 else '' }}" maxlength="1">
+                    <input type="text" name="cell_{{ i }}_{{ j }}" value="{{ sudoku[i][j] if sudoku[i][j] != 0 else '' }}" 
+                           maxlength="1" 
+                           {% if initial_values[i][j] != 0 %}readonly{% endif %}>
                 </td>
                 {% endfor %}
             </tr>
