@@ -88,8 +88,8 @@ a {
 
 #sudoku-container {
     display: grid;
-    grid-template-columns: repeat(9, 20px);
-    grid-template-rows: repeat(9, 20px);
+    grid-template-columns: repeat(9, 50px);
+    grid-template-rows: repeat(9, 50px);
     gap: 2px;
 }
 
