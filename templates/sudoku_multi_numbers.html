@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudoku</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="sudoku-container">
+        <table class="sudoku">
+            {% for i in range(9) %}
+                <tr>
+                    {% for j in range(9) %}
+                        {% if initial_values[i][j] != 0 %}
+                            <td class="fixed">{{ initial_values[i][j] }}</td>
+                        {% else %}
+                            <td class="editable">
+                                <input type="text" maxlength="9" oninput="formatInput(this)">
+                            </td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <script>
+        function formatInput(input) {
+            let value = input.value.replace(/[^1-9]/g, ''); // Remove caracteres não numéricos
+            value = Array.from(new Set(value)).join(''); // Remove números duplicados
+
+            if (value.length > 1) {
+                input.classList.add('multi-numbers');
+            } else {
+                input.classList.remove('multi-numbers');
+            }
+
+            input.value = value;
+        }
+    </script>
+</body>
+</html>

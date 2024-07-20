@@ -14,6 +14,11 @@ def index():
     # Pass the initial values to the template to determine editable cells
     return render_template('sudoku.html', sudoku=current_sudoku.tolist(), initial_values=initial_values.tolist())
 
+@app.route('/multi_numbers')
+def multi_numbers():
+    global current_sudoku
+    return render_template('sudoku_multi_numbers.html', sudoku=current_sudoku.tolist())
+
 @app.route('/new_game')
 def new_game():
     global current_sudoku, initial_values

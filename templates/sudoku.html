@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jogo de Sudoku</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/multi_numbers.css') }}">
 </head>
 <body>
     <h1>Jogo de Sudoku</h1>
@@ -14,8 +15,8 @@
             <tr>
                 {% for j in range(sudoku[i]|length) %}
                 <td>
-                    <input type="text" name="cell_{{ i }}_{{ j }}" value="{{ sudoku[i][j] if sudoku[i][j] != 0 else '' }}" 
-                           maxlength="1" 
+                    <input type="text" class="multi-numbers" name="cell_{{ i }}_{{ j }}" value="{{ sudoku[i][j] if sudoku[i][j] != 0 else '' }}" 
+                           maxlength="9" 
                            {% if initial_values[i][j] != 0 %}readonly{% endif %}>
                 </td>
                 {% endfor %}
@@ -30,6 +31,10 @@
     {% if message %}
     <p>{{ message }}</p>
     {% endif %}
+
+
+    <script>
+        
+    </script>
 </body>
 </html>
-
