@@ -29,13 +29,22 @@
             let value = input.value.replace(/[^1-9]/g, ''); // Remove caracteres não numéricos
             value = Array.from(new Set(value)).join(''); // Remove números duplicados
 
+            const wrapper = input.parentElement;
+            wrapper.innerHTML = ''; // Limpa o conteúdo atual
+
             if (value.length > 1) {
                 input.classList.add('multi-numbers');
+                value.split('').forEach(num => {
+                    const span = document.createElement('span');
+                    span.textContent = num;
+                    span.classList.add('num' + num);
+                    wrapper.appendChild(span);
+                });
             } else {
                 input.classList.remove('multi-numbers');
+                input.value = value;
+                wrapper.appendChild(input);
             }
-
-            input.value = value;
         }
     </script>
 </body>

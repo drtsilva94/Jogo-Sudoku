@@ -34,7 +34,18 @@
 
 
     <script>
-        
+        function formatInput(input) {
+            let value = input.value.replace(/[^1-9]/g, ''); // Remove caracteres não numéricos
+            value = Array.from(new Set(value)).join(''); // Remove números duplicados
+
+            if (value.length > 1) {
+                input.classList.add('multi-numbers');
+            } else {
+                input.classList.remove('multi-numbers');
+            }
+
+            input.value = value;
+        }
     </script>
 </body>
 </html>

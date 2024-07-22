@@ -29,15 +29,40 @@ def new_game():
 @app.route('/check', methods=['POST'])
 def check():
     global current_sudoku
-    # Logic to check if the Sudoku is solved correctly
-    # ...
+    
+    # Verificar se o Sudoku está resolvido corretamente
+    def is_sudoku_solved(sudoku):
+        for row in sudoku:
+            if not np.array_equal(np.sort(row), np.arange(1, 10)):
+                return False
+        
+        for col in sudoku.T:
+            if not np.array_equal(np.sort(col), np.arange(1, 10)):
+                return False
+        
+        for i in range(0, 9, 3):
+            for j in range(0, 9, 3):
+                block = sudoku[i:i+3, j:j+3].flatten()
+                if not np.array_equal(np.sort(block), np.arange(1, 10)):
+                    return False
+        
+        return True
+    
+   # Parse the form data into the current_sudoku array
+    for i in range(9):
+        for j in range(9):
+            cell_value = request.form.get(f'cell-{i}-{j}')
+            if cell_value and cell_value.isdigit():
+                current_sudoku[i][j] = int(cell_value)
+            else:
+                current_sudoku[i][j] = initial_values[i][j]  # Preserve initial values
 
-    # Example placeholder
-    if not np.any(current_sudoku == 0):
+    # Check if the Sudoku is solved
+    if is_sudoku_solved(current_sudoku):
         message = "Sudoku solucionado corretamente!"
     else:
-        message = "O Sudoku ainda não está completo."
-        
+        message = "O Sudoku ainda não está completo ou contém erros."
+    
     return render_template('sudoku.html', sudoku=current_sudoku.tolist(), message=message, initial_values=initial_values.tolist())
 
 if __name__ == '__main__':
