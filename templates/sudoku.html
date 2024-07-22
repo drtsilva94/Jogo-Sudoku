@@ -21,14 +21,15 @@
         .multi-numbers {
             width: 100%;
             height: 100%;
-            text-align: center;
             font-size: 20px;
+            text-align: center;
             border: none;
             outline: none;
+            background-color: transparent;
             position: absolute;
             top: 0;
             left: 0;
-            background-color: transparent;
+            z-index: 1;
         }
         .readonly {
             background-color: #f0f0f0;
@@ -40,7 +41,13 @@
             grid-template-rows: repeat(3, 1fr);
             width: 100%;
             height: 100%;
-            position: relative;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            visibility: hidden; /* Hide by default */
         }
         .multi-number {
             font-size: 10px;
@@ -50,22 +57,11 @@
             border: 1px solid #ccc;
             background-color: transparent;
         }
-        .cell-wrapper {
-            position: relative;
-            width: 100%;
-            height: 100%;
+        .hidden {
+            display: none;
         }
-        .cell-wrapper input {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+        .single-number {
             font-size: 20px;
-            text-align: center;
-            border: none;
-            outline: none;
-            background-color: transparent;
         }
     </style>
 </head>
@@ -81,18 +77,8 @@
                         {% if initial_values[i][j] != 0 %}
                             <input type="text" name="cell_{{ i }}_{{ j }}" value="{{ sudoku[i][j] }}" class="readonly multi-numbers" readonly>
                         {% else %}
-                            {% if sudoku[i][j] == 0 %}
-                                <input type="text" name="cell_{{ i }}_{{ j }}" value="" class="multi-numbers" oninput="formatInput(this)">
-                            {% else %}
-                                {% set numbers = sudoku[i][j] | string %}
-                                <div class="sudoku-cell">
-                                    {% for k in range(1, 10) %}
-                                        <div class="multi-number" style="grid-area: {{ (k-1) // 3 + 1 }} / {{ (k-1) % 3 + 1 }};">
-                                            {{ numbers.find(str(k)) != -1 and k or '' }}
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
+                            <input type="text" name="cell_{{ i }}_{{ j }}" value="" class="multi-numbers" oninput="formatInput(this)">
+                            <div class="sudoku-cell"></div>
                         {% endif %}
                     </div>
                 </td>
@@ -112,23 +98,36 @@
     <script>
         function formatInput(input) {
             let value = input.value.replace(/[^1-9]/g, ''); // Remove caracteres não numéricos
-            value = Array.from(new Set(value)).join(''); // Remove números duplicados
+            value = Array.from(new Set(value.split(''))).join(''); // Remove números duplicados
 
             const container = input.parentElement;
-            container.innerHTML = '';
-            const subgrid = document.createElement('div');
-            subgrid.classList.add('sudoku-cell');
-            
-            for (let i = 1; i <= 9; i++) {
-                const cell = document.createElement('div');
-                cell.className = 'multi-number';
-                cell.style.gridArea = `${Math.floor((i-1) / 3) + 1} / ${((i-1) % 3) + 1}`;
-                cell.textContent = value.includes(i.toString()) ? i : '';
-                subgrid.appendChild(cell);
-            }
+            const subgrid = container.querySelector('.sudoku-cell');
 
-            container.appendChild(subgrid);
-            input.value = value; // Atualiza o valor do input para manter os números organizados
+            // Clear previous content
+            subgrid.innerHTML = '';
+            subgrid.style.visibility = 'hidden'; // Hide subgrid by default
+
+            if (value.length > 1) {
+                // Display the numbers in the subgrid
+                input.style.fontSize = '0'; // Hide the number in the input field
+                subgrid.style.visibility = 'visible'; // Show subgrid for multiple numbers
+
+                for (let i = 1; i <= 9; i++) {
+                    const num = i.toString();
+                    if (value.includes(num)) {
+                        const cell = document.createElement('div');
+                        cell.className = 'multi-number';
+                        cell.style.gridArea = `${Math.floor((i-1) / 3) + 1} / ${((i-1) % 3) + 1}`;
+                        cell.textContent = num;
+                        subgrid.appendChild(cell);
+                    }
+                }
+            } else if (value.length === 1) {
+                // Display a single number in the input field
+                input.value = value;
+                input.style.fontSize = '20px'; // Default size
+                subgrid.style.visibility = 'hidden'; // Hide subgrid for single number
+            }
         }
     </script>
 </body>
