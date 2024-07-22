@@ -11,7 +11,6 @@ initial_values = np.copy(current_sudoku)  # Store initial values to determine ed
 @app.route('/')
 def index():
     global current_sudoku, initial_values
-    # Pass the initial values to the template to determine editable cells
     return render_template('sudoku.html', sudoku=current_sudoku.tolist(), initial_values=initial_values.tolist())
 
 @app.route('/multi_numbers')
@@ -32,30 +31,40 @@ def check():
     
     # Verificar se o Sudoku está resolvido corretamente
     def is_sudoku_solved(sudoku):
+        def is_valid_group(group):
+            nums = [num for num in group if num != 0]
+            return len(nums) == len(set(nums)) and len(nums) == 9
+
+        # Check rows
         for row in sudoku:
-            if not np.array_equal(np.sort(row), np.arange(1, 10)):
+            if not is_valid_group(row):
                 return False
         
-        for col in sudoku.T:
-            if not np.array_equal(np.sort(col), np.arange(1, 10)):
+        # Check columns
+        for col in range(9):
+            if not is_valid_group([sudoku[row][col] for row in range(9)]):
                 return False
         
-        for i in range(0, 9, 3):
-            for j in range(0, 9, 3):
-                block = sudoku[i:i+3, j:j+3].flatten()
-                if not np.array_equal(np.sort(block), np.arange(1, 10)):
+        # Check 3x3 subgrids
+        for box_row in range(0, 9, 3):
+            for box_col in range(0, 9, 3):
+                if not is_valid_group([
+                    sudoku[row][col]
+                    for row in range(box_row, box_row + 3)
+                    for col in range(box_col, box_col + 3)
+                ]):
                     return False
         
         return True
     
-   # Parse the form data into the current_sudoku array
+    # Parse the form data into the current_sudoku array
     for i in range(9):
         for j in range(9):
-            cell_value = request.form.get(f'cell-{i}-{j}')
+            cell_value = request.form.get(f'cell_{i}_{j}')
             if cell_value and cell_value.isdigit():
                 current_sudoku[i][j] = int(cell_value)
             else:
-                current_sudoku[i][j] = initial_values[i][j]  # Preserve initial values
+                current_sudoku[i][j] = 0  # Clear non-initial values if not provided
 
     # Check if the Sudoku is solved
     if is_sudoku_solved(current_sudoku):
