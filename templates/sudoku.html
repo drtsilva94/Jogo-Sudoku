@@ -67,8 +67,15 @@
 </head>
 <body>
     <h1>Jogo de Sudoku</h1>
+    
+    <!-- Tamanho dos botões -->
+    <div style="text-align: center; margin: 20px;">
+        <button onclick="setGridSize('small')">Pequeno</button>
+        <button onclick="setGridSize('normal')">Normal</button>
+    </div>
+
     <form action="{{ url_for('check') }}" method="post">
-        <table>
+        <table id="sudoku-table" class="normal">
             {% for i in range(sudoku|length) %}
             <tr>
                 {% for j in range(sudoku[i]|length) %}
@@ -128,6 +135,12 @@
                 input.style.fontSize = '20px'; // Default size
                 subgrid.style.visibility = 'hidden'; // Hide subgrid for single number
             }
+        }
+
+        // Funções para alternar tamanhos
+        function setGridSize(size) {
+            const table = document.getElementById('sudoku-table');
+            table.className = size;
         }
     </script>
 </body>

@@ -43,3 +43,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
     createSudokuGrid();
 });
+
+ // Funções para alternar tamanhos
+ function setGridSize(size) {
+    const cells = document.querySelectorAll('.cell');
+    cells.forEach(cell => {
+        if (size === 'small') {
+            cell.style.width = '30px';
+            cell.style.height = '30px';
+        } else {
+            cell.style.width = '50px';
+            cell.style.height = '50px';
+        }
+    });
+
+    const inputs = document.querySelectorAll('.cell input');
+    inputs.forEach(input => {
+        if (size === 'small') {
+            input.style.fontSize = '1rem';
+        } else {
+            input.style.fontSize = '1.5rem';
+        }
+    });
+
+    const miniGrids = document.querySelectorAll('.mini-grid');
+    miniGrids.forEach(miniGrid => {
+        if (size === 'small') {
+            miniGrid.style.fontSize = '0.3rem';
+        } else {
+            miniGrid.style.fontSize = '0.5rem';
+        }
+    });
+}
+
+// Event listeners para os botões de tamanho
+const smallSizeBtn = document.createElement('button');
+smallSizeBtn.innerText = 'Pequeno';
+smallSizeBtn.addEventListener('click', () => setGridSize('small'));
+
+const normalSizeBtn = document.createElement('button');
+normalSizeBtn.innerText = 'Normal';
+normalSizeBtn.addEventListener('click', () => setGridSize('normal'));
+
+document.body.insertBefore(smallSizeBtn, container);
+document.body.insertBefore(normalSizeBtn, container);
+});
