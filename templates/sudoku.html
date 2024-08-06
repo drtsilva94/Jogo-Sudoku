@@ -74,7 +74,7 @@
         <button onclick="setGridSize('normal')">Normal</button>
     </div>
 
-    <form action="{{ url_for('check') }}" method="post">
+    <form id="sudoku-form" action="{{ url_for('check') }}" method="post">
         <table id="sudoku-table" class="normal">
             {% for i in range(sudoku|length) %}
             <tr>
@@ -93,14 +93,12 @@
             </tr>
             {% endfor %}
         </table>
-        <button type="submit">Verificar</button>
+        <button type="button" onclick="checkSudoku()">Verificar</button>
     </form>
     <a href="{{ url_for('new_game') }}">
         <button type="button">Novo Jogo</button>
     </a>
-    {% if message %}
-    <p>{{ message }}</p>
-    {% endif %}
+    <p id="message">{{ message }}</p>
 
     <script>
         function formatInput(input) {
@@ -141,6 +139,69 @@
         function setGridSize(size) {
             const table = document.getElementById('sudoku-table');
             table.className = size;
+        }
+
+        function checkSudoku() {
+            const form = document.getElementById('sudoku-form');
+            const formData = new FormData(form);
+            const sudoku = [];
+            for (let i = 0; i < 9; i++) {
+                sudoku[i] = [];
+                for (let j = 0; j < 9; j++) {
+                    const cellValue = formData.get(`cell_${i}_${j}`);
+                    sudoku[i][j] = cellValue ? parseInt(cellValue) : 0;
+                }
+            }
+
+            const messageElement = document.getElementById('message');
+            if (validateSudoku(sudoku)) {
+                messageElement.textContent = 'Sudoku solucionado corretamente!';
+            } else {
+                messageElement.textContent = 'Sudoku solucionado incorretamente ou incompleto.';
+            }
+        }
+
+        function validateSudoku(sudoku) {
+            // Helper function to check if a group (row, column, or box) contains unique numbers 1-9
+            function isValidGroup(group) {
+                const seen = new Set();
+                for (let num of group) {
+                    if (num === 0) return false; // Contains an empty cell
+                    if (seen.has(num)) return false; // Contains a duplicate
+                    seen.add(num);
+                }
+                return true;
+            }
+
+            // Check rows and columns
+            for (let i = 0; i < 9; i++) {
+                const row = [];
+                const col = [];
+                for (let j = 0; j < 9; j++) {
+                    row.push(sudoku[i][j]);
+                    col.push(sudoku[j][i]);
+                }
+                if (!isValidGroup(row) || !isValidGroup(col)) {
+                    return false;
+                }
+            }
+
+            // Check 3x3 subgrids
+            for (let rowStart = 0; rowStart < 9; rowStart += 3) {
+                for (let colStart = 0; colStart < 9; colStart += 3) {
+                    const box = [];
+                    for (let i = 0; i < 3; i++) {
+                        for (let j = 0; j < 3; j++) {
+                            box.push(sudoku[rowStart + i][colStart + j]);
+                        }
+                    }
+                    if (!isValidGroup(box)) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
     </script>
 </body>
