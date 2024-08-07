@@ -48,19 +48,33 @@ input[type="text"]:focus {
 
 /* Estilo para as bordas de blocos 3x3 */
 tr:nth-of-type(3n) td {
-    border-bottom: 2px solid #000;
+    border-bottom: 3px solid #000;
 }
 
 td:nth-of-type(3n) {
-    border-right: 2px solid #000;
+    border-right: 3px solid #000;
 }
 
 tr:nth-of-type(9) td {
-    border-bottom: 2px solid #000;
+    border-bottom: 3px solid #000;
 }
 
 td:nth-of-type(9) {
-    border-right: 2px solid #000;
+    border-right: 3px solid #000;
+}
+
+/* Adicionando bordas específicas para a borda superior e esquerda */
+table {
+    border: 3px solid #000; /* Bordas externas mais escuras e espessas */
+    border-collapse: separate; /* Necessário para bordas externas */
+    border-spacing: 0;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Mantém bordas internas visíveis e ajustadas */
+table td {
+    border: 1px solid #000; /* Bordas internas mais claras e finas */
 }
 
 
@@ -83,9 +97,7 @@ a {
     text-decoration: none;
 }
 
-
-
-
+/* Sudoku Container Styles */
 #sudoku-container {
     display: grid;
     grid-template-columns: repeat(9, 50px);
@@ -142,4 +154,11 @@ a {
 
 .normal .multi-numbers {
     font-size: 20px;
+}
+
+/* Estilo para números gerados automaticamente */
+input.readonly {
+    font-size: 2em; /* Ajuste o tamanho da fonte conforme necessário */
+    background-color: #e9e9e9;
+    pointer-events: none;
 }
