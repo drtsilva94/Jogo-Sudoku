@@ -21,7 +21,8 @@ def multi_numbers():
 @app.route('/new_game')
 def new_game():
     global current_sudoku, initial_values
-    current_sudoku = generate_sudoku()
+    difficulty = request.args.get('difficulty', 'medium')  # Get difficulty from query parameters
+    current_sudoku = generate_sudoku(difficulty)
     initial_values = np.copy(current_sudoku)  # Update initial values for the new game
     return redirect(url_for('index'))
 
