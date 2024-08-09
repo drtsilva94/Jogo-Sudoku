@@ -68,13 +68,21 @@
 <body>
     <h1>Jogo de Sudoku</h1>
     
-    <!-- Tamanho dos botões -->
-    <div style="text-align: center; margin: 20px;">
+    <!-- Botões de dificuldade -->
+    <div id="difficulty-selection" style="text-align: center; margin: 20px;">
+        <button onclick="startGame('easy')">Fácil</button>
+        <button onclick="startGame('medium')">Médio</button>
+        <button onclick="startGame('hard')">Difícil</button>
+    </div>
+
+    <!-- Botões para selecionar o tamanho da grade -->
+    <div id="grid-size-selection" style="text-align: center; margin: 20px; display:none;">
         <button onclick="setGridSize('small')">Pequeno</button>
         <button onclick="setGridSize('normal')">Normal</button>
     </div>
 
-    <form id="sudoku-form" action="{{ url_for('check') }}" method="post">
+    <!-- Formulário do Sudoku, oculto até que uma dificuldade seja selecionada -->
+    <form id="sudoku-form" action="{{ url_for('check') }}" method="post" style="display:none;">
         <table id="sudoku-table" class="normal">
             {% for i in range(sudoku|length) %}
             <tr>
@@ -101,6 +109,20 @@
     <p id="message">{{ message }}</p>
 
     <script>
+        function startGame(difficulty) {
+            // Oculta a seleção de dificuldade
+            document.getElementById('difficulty-selection').style.display = 'none';
+            
+            // Exibe a seleção de tamanho da grade
+            document.getElementById('grid-size-selection').style.display = 'block';
+
+            // Exibe o formulário do Sudoku
+            document.getElementById('sudoku-form').style.display = 'block';
+            
+            // Aqui você pode adicionar lógica específica para cada dificuldade, se desejar
+            console.log("Dificuldade selecionada: " + difficulty);
+        }
+
         function formatInput(input) {
             let value = input.value.replace(/[^1-9]/g, ''); // Remove caracteres não numéricos
             value = Array.from(new Set(value.split(''))).join(''); // Remove números duplicados
@@ -108,14 +130,14 @@
             const container = input.parentElement;
             const subgrid = container.querySelector('.sudoku-cell');
 
-            // Clear previous content
+            // Limpa o conteúdo anterior
             subgrid.innerHTML = '';
-            subgrid.style.visibility = 'hidden'; // Hide subgrid by default
+            subgrid.style.visibility = 'hidden'; // Oculta a subgrade por padrão
 
             if (value.length > 1) {
-                // Display the numbers in the subgrid
-                input.style.fontSize = '0'; // Hide the number in the input field
-                subgrid.style.visibility = 'visible'; // Show subgrid for multiple numbers
+                // Exibe os números na subgrade
+                input.style.fontSize = '0'; // Oculta o número no campo de entrada
+                subgrid.style.visibility = 'visible'; // Exibe a subgrade para múltiplos números
 
                 for (let i = 1; i <= 9; i++) {
                     const num = i.toString();
@@ -128,10 +150,10 @@
                     }
                 }
             } else if (value.length === 1) {
-                // Display a single number in the input field
+                // Exibe um único número no campo de entrada
                 input.value = value;
-                input.style.fontSize = '20px'; // Default size
-                subgrid.style.visibility = 'hidden'; // Hide subgrid for single number
+                input.style.fontSize = '20px'; // Tamanho padrão
+                subgrid.style.visibility = 'hidden'; // Oculta a subgrade para um único número
             }
         }
 
@@ -162,18 +184,18 @@
         }
 
         function validateSudoku(sudoku) {
-            // Helper function to check if a group (row, column, or box) contains unique numbers 1-9
+            // Função auxiliar para verificar se um grupo (linha, coluna ou caixa) contém números únicos de 1 a 9
             function isValidGroup(group) {
                 const seen = new Set();
                 for (let num of group) {
-                    if (num === 0) return false; // Contains an empty cell
-                    if (seen.has(num)) return false; // Contains a duplicate
+                    if (num === 0) return false; // Contém uma célula vazia
+                    if (seen.has(num)) return false; // Contém um duplicado
                     seen.add(num);
                 }
                 return true;
             }
 
-            // Check rows and columns
+            // Verifica linhas e colunas
             for (let i = 0; i < 9; i++) {
                 const row = [];
                 const col = [];
@@ -186,7 +208,7 @@
                 }
             }
 
-            // Check 3x3 subgrids
+            // Verifica subgrades 3x3
             for (let rowStart = 0; rowStart < 9; rowStart += 3) {
                 for (let colStart = 0; colStart < 9; colStart += 3) {
                     const box = [];
