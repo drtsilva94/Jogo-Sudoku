@@ -9,34 +9,41 @@ body {
 h1 {
     text-align: center;
     color: #333;
+    margin-top: 20px;
 }
 
-/* Estilo do formulário e tabela */
+/* Estilo do formulário e tabela centralizada */
 form {
     display: flex;
     justify-content: center;
-    margin: 20px;
+    margin: 20px auto;
+    max-width: 600px;
 }
 
+/* Estilos para a tabela do Sudoku */
 table {
     border-collapse: collapse;
-    border-spacing: 0;
     background-color: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border: 3px solid #000; /* Bordas externas mais escuras e espessas */
 }
 
 td {
-    border: 1px solid #000;
-    padding: 5px;
-    width: 40px;
-    height: 40px;
+    border: 1px solid #ccc;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    vertical-align: middle;
+    position: relative;
 }
 
+/* Estilos para entradas de texto dentro das células */
 input[type="text"] {
     width: 100%;
     height: 100%;
     text-align: center;
     border: none;
+    outline: none;
     font-size: 1.2em;
     box-sizing: border-box;
 }
@@ -55,13 +62,7 @@ td:nth-of-type(3n) {
     border-right: 3px solid #000;
 }
 
-tr:nth-of-type(9) td {
-    border-bottom: 3px solid #000;
-}
 
-td:nth-of-type(9) {
-    border-right: 3px solid #000;
-}
 
 /* Adicionando bordas específicas para a borda superior e esquerda */
 table {
@@ -78,6 +79,7 @@ table td {
 }
 
 
+/* Estilo dos botões */
 button {
     background-color: #007bff;
     color: #fff;
@@ -87,8 +89,8 @@ button {
     cursor: pointer;
     border-radius: 5px;
     margin: 10px;
+    transition: background-color 0.3s ease;
 }
-
 button:hover {
     background-color: #0056b3;
 }
@@ -97,16 +99,17 @@ a {
     text-decoration: none;
 }
 
-/* Sudoku Container Styles */
+/* Estilo da grade do Sudoku para centralização */
 #sudoku-container {
     display: grid;
     grid-template-columns: repeat(9, 50px);
     grid-template-rows: repeat(9, 50px);
     gap: 2px;
+    margin: 20px auto;
 }
 
+/* Estilo das células */
 .cell {
-    border: 1px solid #000;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -114,6 +117,7 @@ a {
     position: relative;
 }
 
+/* Estilo para entradas de célula */
 .cell input {
     width: 100%;
     height: 100%;
@@ -121,8 +125,10 @@ a {
     font-size: 1.5rem;
     border: none;
     outline: none;
+    background-color: transparent;
 }
 
+/* Mini-grade para múltiplos números */
 .cell .mini-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -137,7 +143,8 @@ a {
     justify-content: center;
     align-items: center;
 }
-/* Adicionando classes para os tamanhos diferentes */
+
+/* Estilos para tamanhos diferentes de grade */
 .small td {
     width: 30px;
     height: 30px;
@@ -156,9 +163,31 @@ a {
     font-size: 20px;
 }
 
-/* Estilo para números gerados automaticamente */
+/* Estilo para células somente leitura */
 input.readonly {
-    font-size: 2em; /* Ajuste o tamanho da fonte conforme necessário */
+    font-size: 2em;
     background-color: #e9e9e9;
+    color: #555;
     pointer-events: none;
+}
+
+/* Estilos de acessibilidade e responsividade */
+@media (max-width: 600px) {
+    #sudoku-container {
+        grid-template-columns: repeat(9, 30px);
+        grid-template-rows: repeat(9, 30px);
+    }
+    
+    td, .normal td, .small td {
+        width: 30px;
+        height: 30px;
+    }
+    
+    input[type="text"] {
+        font-size: 1em;
+    }
+    
+    .normal .multi-numbers, .small .multi-numbers {
+        font-size: 14px;
+    }
 }

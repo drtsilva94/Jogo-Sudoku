@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jogo de Sudoku</title>
+    <!-- Link para o arquivo CSS (usado em frameworks como Flask) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <style>
+        /* Estilos principais para o layout do Sudoku */
         table {
             border-collapse: collapse;
             margin: 20px auto;
@@ -47,7 +49,7 @@
             z-index: 0;
             border: 1px solid #ccc;
             box-sizing: border-box;
-            visibility: hidden; /* Hide by default */
+            visibility: hidden; /* Oculta a subgrade por padrão */
         }
         .multi-number {
             font-size: 10px;
@@ -57,31 +59,25 @@
             border: 1px solid #ccc;
             background-color: transparent;
         }
-        .hidden {
-            display: none;
-        }
-        .single-number {
-            font-size: 20px;
-        }
     </style>
 </head>
 <body>
     <h1>Jogo de Sudoku</h1>
     
-    <!-- Botões de dificuldade -->
+    <!-- Seletor de dificuldade -->
     <div id="difficulty-selection" style="text-align: center; margin: 20px;">
         <button onclick="startGame('easy')">Fácil</button>
         <button onclick="startGame('medium')">Médio</button>
         <button onclick="startGame('hard')">Difícil</button>
     </div>
 
-    <!-- Botões para selecionar o tamanho da grade -->
+    <!-- Seletor de tamanho de grade, inicialmente oculto -->
     <div id="grid-size-selection" style="text-align: center; margin: 20px; display:none;">
         <button onclick="setGridSize('small')">Pequeno</button>
         <button onclick="setGridSize('normal')">Normal</button>
     </div>
 
-    <!-- Formulário do Sudoku, oculto até que uma dificuldade seja selecionada -->
+    <!-- Formulário do Sudoku (inicialmente oculto) -->
     <form id="sudoku-form" action="{{ url_for('check') }}" method="post" style="display:none;">
         <table id="sudoku-table" class="normal">
             {% for i in range(sudoku|length) %}
@@ -90,8 +86,10 @@
                 <td>
                     <div class="cell-wrapper">
                         {% if initial_values[i][j] != 0 %}
+                            <!-- Células com valores fixos -->
                             <input type="text" name="cell_{{ i }}_{{ j }}" value="{{ sudoku[i][j] }}" class="readonly multi-numbers" readonly>
                         {% else %}
+                            <!-- Células editáveis para o jogador -->
                             <input type="text" name="cell_{{ i }}_{{ j }}" value="" class="multi-numbers" oninput="formatInput(this)">
                             <div class="sudoku-cell"></div>
                         {% endif %}
@@ -109,69 +107,53 @@
     <p id="message">{{ message }}</p>
 
     <script>
+        // Função para iniciar o jogo com base na dificuldade escolhida
         function startGame(difficulty) {
-            // Oculta a seleção de dificuldade
             document.getElementById('difficulty-selection').style.display = 'none';
-            
-            // Exibe a seleção de tamanho da grade
             document.getElementById('grid-size-selection').style.display = 'block';
-
-            // Exibe o formulário do Sudoku
             document.getElementById('sudoku-form').style.display = 'block';
-            
-            // Aqui você pode adicionar lógica específica para cada dificuldade, se desejar
             console.log("Dificuldade selecionada: " + difficulty);
         }
 
+        // Função para formatar a entrada dos números e exibir múltiplos números na célula
         function formatInput(input) {
-            let value = input.value.replace(/[^1-9]/g, ''); // Remove caracteres não numéricos
-            value = Array.from(new Set(value.split(''))).join(''); // Remove números duplicados
+            let value = input.value.replace(/[^1-9]/g, ''); // Limita a entrada a 1-9
+            value = Array.from(new Set(value.split(''))).join(''); // Remove duplicados
 
             const container = input.parentElement;
             const subgrid = container.querySelector('.sudoku-cell');
-
-            // Limpa o conteúdo anterior
-            subgrid.innerHTML = '';
+            subgrid.innerHTML = ''; // Limpa o conteúdo anterior
             subgrid.style.visibility = 'hidden'; // Oculta a subgrade por padrão
 
             if (value.length > 1) {
-                // Exibe os números na subgrade
-                input.style.fontSize = '0'; // Oculta o número no campo de entrada
-                subgrid.style.visibility = 'visible'; // Exibe a subgrade para múltiplos números
-
-                for (let i = 1; i <= 9; i++) {
-                    const num = i.toString();
-                    if (value.includes(num)) {
-                        const cell = document.createElement('div');
-                        cell.className = 'multi-number';
-                        cell.style.gridArea = `${Math.floor((i-1) / 3) + 1} / ${((i-1) % 3) + 1}`;
-                        cell.textContent = num;
-                        subgrid.appendChild(cell);
-                    }
-                }
-            } else if (value.length === 1) {
-                // Exibe um único número no campo de entrada
+                input.style.fontSize = '0';
+                subgrid.style.visibility = 'visible';
+                value.split('').forEach(num => {
+                    const cell = document.createElement('div');
+                    cell.className = 'multi-number';
+                    cell.textContent = num;
+                    subgrid.appendChild(cell);
+                });
+            } else {
                 input.value = value;
-                input.style.fontSize = '20px'; // Tamanho padrão
-                subgrid.style.visibility = 'hidden'; // Oculta a subgrade para um único número
+                input.style.fontSize = '20px';
+                subgrid.style.visibility = 'hidden';
             }
         }
 
-        // Funções para alternar tamanhos
+        // Define o tamanho da grade do Sudoku
         function setGridSize(size) {
-            const table = document.getElementById('sudoku-table');
-            table.className = size;
+            document.getElementById('sudoku-table').className = size;
         }
 
+        // Função para verificar o Sudoku
         function checkSudoku() {
             const form = document.getElementById('sudoku-form');
             const formData = new FormData(form);
-            const sudoku = [];
+            const sudoku = Array.from({ length: 9 }, () => Array(9).fill(0));
             for (let i = 0; i < 9; i++) {
-                sudoku[i] = [];
                 for (let j = 0; j < 9; j++) {
-                    const cellValue = formData.get(`cell_${i}_${j}`);
-                    sudoku[i][j] = cellValue ? parseInt(cellValue) : 0;
+                    sudoku[i][j] = parseInt(formData.get(`cell_${i}_${j}`)) || 0;
                 }
             }
 
@@ -183,32 +165,23 @@
             }
         }
 
+        // Função auxiliar para validar o Sudoku
         function validateSudoku(sudoku) {
-            // Função auxiliar para verificar se um grupo (linha, coluna ou caixa) contém números únicos de 1 a 9
             function isValidGroup(group) {
                 const seen = new Set();
                 for (let num of group) {
-                    if (num === 0) return false; // Contém uma célula vazia
-                    if (seen.has(num)) return false; // Contém um duplicado
+                    if (num === 0 || seen.has(num)) return false;
                     seen.add(num);
                 }
                 return true;
             }
 
-            // Verifica linhas e colunas
             for (let i = 0; i < 9; i++) {
-                const row = [];
-                const col = [];
-                for (let j = 0; j < 9; j++) {
-                    row.push(sudoku[i][j]);
-                    col.push(sudoku[j][i]);
-                }
-                if (!isValidGroup(row) || !isValidGroup(col)) {
-                    return false;
-                }
+                const row = sudoku[i];
+                const col = sudoku.map(row => row[i]);
+                if (!isValidGroup(row) || !isValidGroup(col)) return false;
             }
 
-            // Verifica subgrades 3x3
             for (let rowStart = 0; rowStart < 9; rowStart += 3) {
                 for (let colStart = 0; colStart < 9; colStart += 3) {
                     const box = [];
@@ -217,12 +190,9 @@
                             box.push(sudoku[rowStart + i][colStart + j]);
                         }
                     }
-                    if (!isValidGroup(box)) {
-                        return false;
-                    }
+                    if (!isValidGroup(box)) return false;
                 }
             }
-
             return true;
         }
     </script>

@@ -4,17 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sudoku</title>
+    <!-- Ligação ao CSS com referência a um arquivo estático (usado em frameworks como Flask) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
+    <!-- Container principal para o tabuleiro de Sudoku -->
     <div class="sudoku-container">
         <table class="sudoku">
+            <!-- Loop para gerar linhas e células do Sudoku dinamicamente -->
             {% for i in range(9) %}
                 <tr>
                     {% for j in range(9) %}
                         {% if initial_values[i][j] != 0 %}
+                            <!-- Células com valores fixos (pré-definidos) -->
                             <td class="fixed">{{ initial_values[i][j] }}</td>
                         {% else %}
+                            <!-- Células editáveis para o jogador inserir números -->
                             <td class="editable">
                                 <input type="text" maxlength="9" oninput="formatInput(this)">
                             </td>
@@ -24,23 +29,31 @@
             {% endfor %}
         </table>
     </div>
+
+    <!-- Script JavaScript para formatar a entrada dos números do usuário -->
     <script>
         function formatInput(input) {
-            let value = input.value.replace(/[^1-9]/g, ''); // Remove caracteres não numéricos
-            value = Array.from(new Set(value)).join(''); // Remove números duplicados
+            // Remove caracteres não numéricos da entrada
+            let value = input.value.replace(/[^1-9]/g, '');
+            
+            // Remove números duplicados da entrada
+            value = Array.from(new Set(value)).join('');
 
+            // Container da célula para atualização do conteúdo
             const wrapper = input.parentElement;
             wrapper.innerHTML = ''; // Limpa o conteúdo atual
 
+            // Se houver múltiplos números, divide e exibe cada um individualmente
             if (value.length > 1) {
                 input.classList.add('multi-numbers');
                 value.split('').forEach(num => {
                     const span = document.createElement('span');
                     span.textContent = num;
-                    span.classList.add('num' + num);
+                    span.classList.add('num' + num); // Classe para estilizar individualmente, se necessário
                     wrapper.appendChild(span);
                 });
             } else {
+                // Caso contrário, exibe apenas o número único
                 input.classList.remove('multi-numbers');
                 input.value = value;
                 wrapper.appendChild(input);
