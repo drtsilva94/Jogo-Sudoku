@@ -63,17 +63,6 @@ Este é um projeto de jogo de Sudoku, onde os jogadores podem resolver quebra-ca
      ```
    - Abra o navegador e acesse o jogo em `http://127.0.0.1:5000`.
 
-2. **Geração de Novos Tabuleiros**:
-   - Utilize o script `sudoku-generator.py` para gerar novos tabuleiros com a dificuldade desejada.
-   - Integre o tabuleiro gerado ao frontend para exibir o quebra-cabeça no navegador.
 
-## Exemplos de Código
 
-### Exemplo de uso do gerador de Sudoku
 
-```python
-from sudoku_generator import generate_sudoku
-
-# Gera um tabuleiro de Sudoku com dificuldade 'médio'
-tabuleiro = generate_sudoku(difficulty='medium')
-print(tabuleiro)
