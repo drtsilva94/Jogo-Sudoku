@@ -1,4 +1,4 @@
-# Sudoku Game
+# Jogo Sudoku
 
 ## Descrição
 
